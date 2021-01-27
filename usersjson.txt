@@ -1,0 +1,30 @@
+{
+"name": "Anna",
+"surname": "Clarke",
+"company": "AGB",
+"emailAddress": "annaclarke@agb.de"
+}
+{
+"name": "John",
+"surname": "Travolta",
+"company": "Hollywood",
+"emailAddress": "johntra@hollywood.de"
+}
+{
+"name": "Michelle",
+"surname": "Pfaiffer",
+"company": "Hollywood",
+"emailAddress": "mipfa@hollywood.de"
+}
+{
+"name": "Johnny",
+"surname": "Depp",
+"company": "Sparrow",
+"emailAddress": "jd@sparrow.de"
+}
+{
+"name": "Sarah",
+"surname": "Connor",
+"company": "BBC",
+"emailAddress": "bbc@mail.com"
+}
