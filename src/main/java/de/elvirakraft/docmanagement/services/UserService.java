@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.function.LongToIntFunction;
 
 @Service
-public class UserService extends CRUDService {
+public class UserService extends CRUDService<User, UserRepository> {
     @Autowired
     UserRepository userRepository;
 
@@ -32,7 +32,7 @@ public class UserService extends CRUDService {
         return user;
     }
 
-    public void deleteUser(User user){
-        userRepository.deleteById(user.getId());
+    public void deleteUser(Long userId){
+        userRepository.deleteById(userId);
     }
 }

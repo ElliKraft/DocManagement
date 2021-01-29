@@ -1,7 +1,9 @@
 package de.elvirakraft.docmanagement.controllers;
 
-import de.elvirakraft.docmanagement.UserNotFoundException;
+import de.elvirakraft.docmanagement.helpers.CRUDService;
+import de.elvirakraft.docmanagement.helpers.RESTController;
 import de.elvirakraft.docmanagement.models.User;
+import de.elvirakraft.docmanagement.repositories.UserRepository;
 import de.elvirakraft.docmanagement.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,11 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-//@Controller
+@Controller
 @RestController
 //@Api ()
 @CrossOrigin()
-public class UserController {
+public class UserController extends RESTController<User, UserRepository, UserService> {
 
     @Autowired
     private UserService userService;
@@ -46,8 +48,8 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/api/deleteUser", produces = {"application/json"})
-    public ResponseEntity deleteUser(@RequestBody User user) {
-        userService.deleteUser(user);
+    public ResponseEntity deleteUser(@RequestBody Long userId) {
+        userService.deleteUser(userId);
         return ResponseEntity.ok().body("{\"deletedUser\":\"true\"}");
     }
 
