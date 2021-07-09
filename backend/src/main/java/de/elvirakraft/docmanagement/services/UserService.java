@@ -1,7 +1,6 @@
 package de.elvirakraft.docmanagement.services;
 
 import de.elvirakraft.docmanagement.entities.User;
-import de.elvirakraft.docmanagement.entities.UserRole;
 import de.elvirakraft.docmanagement.repositories.UserRepository;
 import de.elvirakraft.docmanagement.repositories.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +28,9 @@ public class UserService {
      * @return The added user.
      */
     public User addUser(User user) {
-        //User userToSave = user.clone();
-        User savedUser = userRepository.save(user);
-        userRoleRepository.save(new UserRole(savedUser,"USER"));
-        return savedUser;
+        user.addRole(userRoleRepository.findUserRoleByRoleName("DEFAULT"));
+        user.setDeleted(false);
+        return userRepository.save(user);
     }
 
     /**
@@ -50,21 +48,11 @@ public class UserService {
         User userToUpdate = optionalUser.get();
         if (user.getName() != null) userToUpdate.setName(user.getName());
         if (user.getSurname() != null) userToUpdate.setSurname(user.getSurname());
+        if (user.getCompany() != null) userToUpdate.setCompany(user.getCompany());
         if (user.getEmail() != null) userToUpdate.setEmail(user.getEmail());
         if (user.getPassword() != null) userToUpdate.setPassword(user.getPassword());
 
         return userRepository.save(userToUpdate);
-    }
-
-
-    /**
-     * Returns a user with the given ID.
-     *
-     * @param id The given ID.
-     * @return The user.
-     */
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
     }
 
     /**
@@ -84,6 +72,15 @@ public class UserService {
         return userRepository.save(userToDelete);
     }
 
+    /**
+     * Returns a user with the given ID.
+     *
+     * @param id The given ID.
+     * @return The user.
+     */
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
 
     /**
      * Returns all users.

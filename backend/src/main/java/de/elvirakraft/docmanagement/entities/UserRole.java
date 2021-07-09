@@ -1,9 +1,12 @@
 package de.elvirakraft.docmanagement.entities;
 
-import de.elvirakraft.docmanagement.entities.User;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @ToString
 @NoArgsConstructor
@@ -11,20 +14,33 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "userRoles")
+@JsonIdentityInfo(  // to deserialize entity in bidirectiional many-to-many relatioship
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id")
 public class UserRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    /*@ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User user;*/
 
-    private String role;
+    // test
+    @ManyToMany(mappedBy = "rolesOfTheUser")
+    @JsonIgnore
+    Set<User> users;
 
-    public UserRole(User user, String role){
-        this.user = user;
-        this.role = role;
+    //@Column(nullable = false, length = 50)
+    private String roleName;
+
+    public UserRole(String roleName){
+        this.users = new HashSet<>();
+        this.roleName = roleName;
+    }
+
+    public void deleteUserFromUsers(User user){
+        this.users.remove(user);
     }
 }
