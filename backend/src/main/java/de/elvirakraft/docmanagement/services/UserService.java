@@ -1,6 +1,7 @@
 package de.elvirakraft.docmanagement.services;
 
 import de.elvirakraft.docmanagement.entities.User;
+import de.elvirakraft.docmanagement.entities.UserRole;
 import de.elvirakraft.docmanagement.repositories.UserRepository;
 import de.elvirakraft.docmanagement.repositories.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,14 @@ public class UserService {
      * @return The added user.
      */
     public User addUser(User user) {
-        user.addRole(userRoleRepository.findUserRoleByRoleName("DEFAULT"));
-        user.setDeleted(false);
-        return userRepository.save(user);
+        UserRole userRoleToAdd = userRoleRepository.findUserRoleByRoleName("DEFAULT");
+
+        if (!userRepository.existsUserByEmail(user.getEmail())) {
+            user.addRole(userRoleToAdd);
+            user.setDeleted(false);
+            return userRepository.save(user);
+        }
+        return null;
     }
 
     /**
@@ -83,7 +89,7 @@ public class UserService {
     }
 
     /**
-     * Returns all users.
+     * Returns all users: deleted + alive.
      *
      * @return The users.
      */
@@ -91,4 +97,23 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    /**
+     * Returns all deleted users
+     *
+     * @return The deleted users
+     * TODO test the method
+     */
+    public List<User> getAllDeletedUsers() {
+        return userRepository.findUsersByDeletedTrue();
+    }
+
+    /**
+     * Returns all the users, that are not deleted
+     *
+     * @return The alive users
+     * TODO test the method
+     */
+    public List<User> getAllAliveUsers() {
+        return userRepository.findUsersByDeletedFalse();
+    }
 }

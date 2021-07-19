@@ -10,10 +10,9 @@ import java.util.Set;
 @Entity
 @ToString
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "userRoles")
+@Table(name = "user_roles")
 @JsonIdentityInfo(  // to deserialize entity in bidirectiional many-to-many relatioship
     generator = ObjectIdGenerators.PropertyGenerator.class,
     property = "id")
@@ -23,16 +22,12 @@ public class UserRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    /*@ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;*/
-
-    // test
+    // A group of users, having the current role
     @ManyToMany(mappedBy = "rolesOfTheUser")
     @JsonIgnore
     Set<User> users;
 
-    //@Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50)
     private String roleName;
 
     public UserRole(String roleName){
@@ -40,7 +35,13 @@ public class UserRole {
         this.roleName = roleName;
     }
 
+    // Removes the current role from the given user
     public void deleteUserFromUsers(User user){
         this.users.remove(user);
+    }
+
+    // Returns all users, having the current role
+    public Set<User> getAllUsersWithThisRole(Integer roleId){
+        return this.getUsers();
     }
 }

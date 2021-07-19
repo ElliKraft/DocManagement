@@ -25,7 +25,11 @@ public class UserController {
     @PostMapping("/")
     //@PreAuthorize("isAllowed(null, 'ADMIN') or (isAllowed(null, 'USER') and #user.id == authentication.userId)")
     public ResponseEntity<User> addUser(@RequestBody User user) {
-        return new ResponseEntity<>(userService.addUser(user), HttpStatus.CREATED);
+        User userToAdd = userService.addUser(user);
+        if (userToAdd != null) {
+            return new ResponseEntity<>(userToAdd, HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @PutMapping("/")
@@ -58,5 +62,23 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable Long userId) {
         Optional<User> optionalUser = userService.getUserById(userId);
         return optionalUser.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/allDeleted")
+    public ResponseEntity<List<User>> getAllDeletedUsers() {
+        List<User> deletedUsers = userService.getAllDeletedUsers();
+        if (deletedUsers.isEmpty()) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(deletedUsers, HttpStatus.OK);
+    }
+
+    @GetMapping("/allAlive")
+    public ResponseEntity<List<User>> getAllAliveUsers() {
+        List<User> aliveUsers = userService.getAllAliveUsers();
+        if (aliveUsers.isEmpty()) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(aliveUsers, HttpStatus.OK);
     }
 }

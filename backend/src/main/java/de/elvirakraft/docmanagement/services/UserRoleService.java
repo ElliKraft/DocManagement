@@ -1,17 +1,13 @@
 package de.elvirakraft.docmanagement.services;
 
-import com.sun.xml.bind.v2.TODO;
 import de.elvirakraft.docmanagement.entities.User;
-import de.elvirakraft.docmanagement.models.UserDTO;
 import de.elvirakraft.docmanagement.entities.UserRole;
 import de.elvirakraft.docmanagement.repositories.UserRepository;
 import de.elvirakraft.docmanagement.repositories.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 public class UserRoleService {
@@ -26,40 +22,23 @@ public class UserRoleService {
     }
 
     /**
-     * Adds the 'ADMIN' role to the user with the given userId.
+     * Creates a user role with the given name.
      *
-     * @param userId The given userId.
-     * @return The added UserRole.
+     * @param userRole The new user role instance.
+     * @return The new user role.
      */
-    /*public UserRole addAdminRole(Long userId){
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()){
+    public UserRole createAnyRole(UserRole userRole){
+        if (userRoleRepository.findByRoleName(userRole.getRoleName()).isPresent()){
             return null;
         }
-        //return userRoleRepository.save(new UserRole(optionalUser.get(), "ADMIN"));
-        return userRoleRepository.save(new UserRole(optionalUser.get(), "ADMIN"));
-    }*/
-
-    // test
-   /* public UserRole addAdminRoleToUser(User user){
-        UserRole userRoleToEdit = userRoleRepository.findUserRoleByUser(user);
-        userRoleToEdit.getUsers().add(user);
-        return userRoleToEdit;
-    }*/
-
-    public User addAnyRoleToUser(User user, String roleName){
-        user.addRole(userRoleRepository.findUserRoleByRoleName(roleName));
-        return userRepository.save(user);
-        //return user.addRole(userRoleRepository.findUserRoleByRoleName("ADMIN"));
+        return userRoleRepository.save(new UserRole(userRole.getRoleName()));
     }
 
-    public UserRole createAnyRole(String roleName){
-        if (userRoleRepository.findByRoleName(roleName).isPresent()){
-            return null;
-        }
-        return userRoleRepository.save(new UserRole(roleName));
-    }
-
+    /**
+     * Edits a user role with the given name.
+     *
+     * @param userRole The user role to be edited.
+     */
     public UserRole editAnyRole(UserRole userRole) {
         Optional<UserRole> optionalUserRole = userRoleRepository.findById(userRole.getId());
         if (optionalUserRole.isEmpty()) {
@@ -71,90 +50,98 @@ public class UserRoleService {
             userRoleToEdit.setRoleName(userRole.getRoleName());
         }
         return userRoleRepository.save(userRoleToEdit);
-        /**
-         * TODO return a string with an error message, that the role already exists
-         */
     }
 
-    public void removeUserroleUserAssociation(Integer userRoleId) {
-        UserRole userRoleInAssoc = userRoleRepository.getById(userRoleId);
+    /**
+     * Removes an association between a user and a user role for the following deletion of the user role
+     *
+     * @param roleId The id of the user role to be deleted.
+     */
+    public void removeUserroleUserAssociation(Integer roleId) {
+        UserRole userRoleInAssoc = userRoleRepository.getById(roleId);
         for (User user: userRoleInAssoc.getUsers()) {
-            userRoleInAssoc.deleteUserFromUsers(user);
+            user.removeRole(userRoleInAssoc);
         }
     }
 
-    public Optional<UserRole> deleteAnyRole(Integer roleId){
+    /**
+     * Deletes a user role with the given id.
+     *
+     * @param roleId The id of the user role to be deleted.
+     * @return The deleted user role.
+     */
+    public UserRole deleteGivenRole(Integer roleId){
         Optional<UserRole> optionalUserRole = userRoleRepository.findById(roleId);
         if (optionalUserRole.isEmpty()) {
-            return optionalUserRole;
+            return null;
         }
         UserRole userRoleToDelete = optionalUserRole.get();
         removeUserroleUserAssociation(roleId);
         userRoleRepository.delete(userRoleToDelete);
-        return userRoleRepository.findById(userRoleToDelete.getId());
+        return userRoleToDelete;
     }
 
-
-
     /**
-     * Adds the 'MITARBEITER' role to the user with the given userId.
+     * Adds the given role to the given user.
      *
-     * @param userId The given userId.
-     * @return The added UserRole.
+     * @param userId roleId The id of the given user and the id of the role to be given to the user.
+     * @return The user with the added user role.
      */
- /*   public UserRole addMitarbeiterRole(Long userId){
+    public User addAnyRoleToUser(Long userId, Integer roleId){
         Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()){
+        Optional<UserRole> optionalUserRole = userRoleRepository.findById(roleId);
+        if (optionalUser.isEmpty() || optionalUserRole.isEmpty()) {
             return null;
         }
-        return userRoleRepository.save(new UserRole(optionalUser.get(), "MITARBEITER"));
+        User user = optionalUser.get();
+        user.addRole(userRoleRepository.getById(roleId));
+        return userRepository.save(user);
     }
 
     /**
-     * Deletes ADMIN role from the user with the given userId, when the user is deleted.
+     * Deletes the given role from the given user
      *
-     * @param userId The given userId.
-     * @return The deleted UserRole.
+     * @param userId The id of the given user
+     * @return The updated user
      */
- /*   public UserRole deleteAdminRole(Long userId) {
-        Optional<UserRole> optionalUserRole = userRoleRepository.findByUserIdAndRole(userId, "ADMIN");
-        if (optionalUserRole.isEmpty()) {
+    public User deleteGivenRoleFromUser(Integer roleId, Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
             return null;
         }
-        userRoleRepository.delete(optionalUserRole.get());
-        return optionalUserRole.get();
+        User user = optionalUser.get();
+        user.removeRole(userRoleRepository.getById(roleId));
+        return userRepository.save(user);
     }
 
     /**
-     * Deletes MITARBEITER role from the user with the given userId, when the user is deleted.
+     * Gets a user role by the given id.
      *
-     * @param userId The given userId.
-     * @return The deleted UserRole.
+     * @param roleId The id of the user role to return.
+     * @return The found user role.
      */
- /*   public UserRole deleteMitarbeiterRole(Long userId) {
-        Optional<UserRole> optionalUserRole = userRoleRepository.findByUserIdAndRole(userId, "MITARBEITER");
-        if (optionalUserRole.isEmpty()) {
-            return null;
-        }
-        userRoleRepository.delete(optionalUserRole.get());
-        return optionalUserRole.get();
+    public Optional<UserRole> getUserRoleById(Integer roleId) {
+        return userRoleRepository.findById(roleId);
     }
 
     /**
-     * Returns a list of users for given role.
+     * Gets all user roles from the database.
      *
-     * @param role The given role.
+     * @return The list of all user roles.
+     */
+    public List<UserRole> getAllUserRoles(){
+        return userRoleRepository.findAll();
+    }
+
+    /**
+     * Returns a list of users, which are not deleted, for given role.
+     *
+     * @param roleId The id of the given role.
      * @return List of users
      */
- /*   public List<UserDTO> findUsersByRole(String role) {
-        // Return a List of freshly mapped UserDTOs
-        return userRoleRepository.findUsersByRole(role)
-            .stream()
-            .map(usr -> new UserDTO(
-                usr.getUser().getName(),
-                usr.getUser().getSurname(),
-                usr.getUser().getEmail()))
-            .collect(Collectors.toList());
+    public List<User> findUsersByRole(Integer roleId) {
+        Set<User> allUsersSet = userRoleRepository.findById(roleId).get().getAllUsersWithThisRole(roleId);
+        allUsersSet.removeIf(User::isDeleted);
+        return new ArrayList<>(allUsersSet);
     }
-*/
 }

@@ -26,7 +26,7 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 50)
@@ -47,14 +47,21 @@ public class User {
     @Column
     private boolean deleted;
 
-    // added
+    // A set of the roles, which the current user has
     @ManyToMany
     @JoinTable(
         name = "user_userrole",
         joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "userRole_id"))
+        inverseJoinColumns = @JoinColumn(name = "user_role_id"))
     Set<UserRole> rolesOfTheUser;
 
+    //
+    @ManyToMany
+    @JoinTable(
+        name = "user_document",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "document_id"))
+    Set<Document> documentsOfTheUser;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -63,15 +70,14 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime lastModifiedDate;
 
-    public User(Long id, String name, String surname, String company, String email, String password, boolean deleted, Set<UserRole> rolesOfTheUser) {
-        this.id = id;
+    public User(String name, String surname, String company, String email, String password, boolean deleted) {
         this.name = name;
         this.surname = surname;
         this.company = company;
         this.email = email;
         this.password = password;
         this.deleted = deleted;
-        this.rolesOfTheUser = rolesOfTheUser;
+        this.rolesOfTheUser = new HashSet<>();
     }
 
     public User clone() {
@@ -86,7 +92,10 @@ public class User {
         return clonedUser;
     }
 
-    public void addRole(UserRole userRole){
+    public void addRole(UserRole userRole) {
         this.rolesOfTheUser.add(userRole);
+    }
+    public void removeRole(UserRole userRole) {
+        this.rolesOfTheUser.remove(userRole);
     }
 }

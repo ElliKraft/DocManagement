@@ -5,7 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 /**
- * Entity which holds the information about a contract partner or other business relationship participant
+ * Entity which holds the information about a business relationship partner (contract, etc.)
  */
 @Entity
 @ToString
@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class Partner {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false, length = 100)

@@ -15,14 +15,17 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "documentCategories")
-public class DocumentCategory {
+@Table(name = "doc_categories")
+public class DocCategory {
 
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(nullable = false, length = 100)
     private String category;
+
+    @Column
+    private boolean isDeleted;
 }
