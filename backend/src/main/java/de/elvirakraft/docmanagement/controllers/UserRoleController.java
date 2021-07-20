@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.management.relation.RoleNotFoundException;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,11 +33,15 @@ public class UserRoleController {
 
     @PostMapping("/{userId}/{roleId}")
     public ResponseEntity<User> addGivenRoleToUser(@PathVariable Integer roleId, @PathVariable Long userId) {
-        User updatedUser = userRoleService.addAnyRoleToUser(userId,roleId);
-        if (updatedUser != null) {
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        try{
+            return ResponseEntity.ok(userRoleService.addAnyRoleToUser(userId,roleId));
+        }catch (EntityNotFoundException e){
+            System.err.println(e.getLocalizedMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User was not found");
+        }catch (RoleNotFoundException e){
+            System.err.println(e.getLocalizedMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role does not exist");
         }
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     // updates the role itself and the role in the "rolesOfTheUser" array in User entity
@@ -56,8 +63,8 @@ public class UserRoleController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/{roleId}/{userId}")
-    public ResponseEntity<User> deleteGivenRoleFromUser(@PathVariable Integer roleId, @PathVariable Long userId) {
+    @DeleteMapping("/{userId}/{roleId}")
+    public ResponseEntity<User> deleteGivenRoleFromUser(@PathVariable Long userId, @PathVariable Integer roleId) {
         User user = userRoleService.deleteGivenRoleFromUser(roleId, userId);
         if (user != null) {
             return new ResponseEntity<>(user, HttpStatus.OK);

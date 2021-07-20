@@ -53,7 +53,7 @@ public class User {
         name = "user_userrole",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "user_role_id"))
-    Set<UserRole> rolesOfTheUser;
+    Set<UserRole> rolesOfTheUser = new HashSet<>();
 
     //
     @ManyToMany
@@ -61,7 +61,7 @@ public class User {
         name = "user_document",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "document_id"))
-    Set<Document> documentsOfTheUser;
+    Set<Document> documentsOfTheUser = new HashSet<>();
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -77,7 +77,6 @@ public class User {
         this.email = email;
         this.password = password;
         this.deleted = deleted;
-        this.rolesOfTheUser = new HashSet<>();
     }
 
     public User clone() {

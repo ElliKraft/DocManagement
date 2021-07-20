@@ -21,10 +21,10 @@ public class UserController {
         this.userService = userService;
     }
 
-
     @PostMapping("/")
     //@PreAuthorize("isAllowed(null, 'ADMIN') or (isAllowed(null, 'USER') and #user.id == authentication.userId)")
     public ResponseEntity<User> addUser(@RequestBody User user) {
+        System.out.println("false");
         User userToAdd = userService.addUser(user);
         if (userToAdd != null) {
             return new ResponseEntity<>(userToAdd, HttpStatus.CREATED);

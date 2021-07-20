@@ -7,6 +7,8 @@ import de.elvirakraft.docmanagement.repositories.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.RoleNotFoundException;
+import javax.persistence.EntityNotFoundException;
 import java.util.*;
 
 @Service
@@ -87,14 +89,9 @@ public class UserRoleService {
      * @param userId roleId The id of the given user and the id of the role to be given to the user.
      * @return The user with the added user role.
      */
-    public User addAnyRoleToUser(Long userId, Integer roleId){
-        Optional<User> optionalUser = userRepository.findById(userId);
-        Optional<UserRole> optionalUserRole = userRoleRepository.findById(roleId);
-        if (optionalUser.isEmpty() || optionalUserRole.isEmpty()) {
-            return null;
-        }
-        User user = optionalUser.get();
-        user.addRole(userRoleRepository.getById(roleId));
+    public User addAnyRoleToUser(Long userId, Integer roleId) throws RoleNotFoundException {
+        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+        user.addRole(userRoleRepository.findById(roleId).orElseThrow(EntityNotFoundException::new));
         return userRepository.save(user);
     }
 
@@ -105,11 +102,7 @@ public class UserRoleService {
      * @return The updated user
      */
     public User deleteGivenRoleFromUser(Integer roleId, Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
-            return null;
-        }
-        User user = optionalUser.get();
+        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
         user.removeRole(userRoleRepository.getById(roleId));
         return userRepository.save(user);
     }

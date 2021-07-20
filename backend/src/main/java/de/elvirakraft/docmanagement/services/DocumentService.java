@@ -7,8 +7,8 @@ import de.elvirakraft.docmanagement.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DocumentService {
@@ -28,7 +28,10 @@ public class DocumentService {
      * @param document The given document
      * @return The added document.
      */
-    public Document addDocument(Document document) {
+    public Document addDocument(Document document, Long userId) {
+        User userToAdd = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+        userToAdd.getDocumentsOfTheUser().add(document);
+        document.addUserToEditorsSet(userRepository.getById(userId));
         return documentRepository.save(document);
     }
 
@@ -38,13 +41,8 @@ public class DocumentService {
      * @param document The given document.
      * @return The edited document.
      */
-    public Document updateDocument(Document document) {
-        Optional<Document> optionalDocument = documentRepository.findById(document.getDocId());
-        if (optionalDocument.isEmpty()) {
-            return null;
-        }
-
-        Document documentToUpdate = optionalDocument.get();
+    public Document updateDocument(Document document) throws EntityNotFoundException{
+        Document documentToUpdate = documentRepository.findById(document.getId()).orElseThrow(EntityNotFoundException::new);
         if (document.getTitle() != null) documentToUpdate.setTitle(document.getTitle());
         if (document.getNumber() != null) documentToUpdate.setNumber(document.getNumber());
         if (document.getConclusionDate() != null) documentToUpdate.setConclusionDate(document.getConclusionDate());
@@ -54,7 +52,7 @@ public class DocumentService {
 
         return documentRepository.save(documentToUpdate);
     }
-/*
+
     /**
      * Deletes the document with the given ID.
      *
@@ -62,12 +60,7 @@ public class DocumentService {
      * @return The deleted document.
      */
     public Document deleteDocument(Long id) {
-        Optional<Document> optionalDocument = documentRepository.findById(id);
-        if (optionalDocument.isEmpty()) {
-            return null;
-        }
-
-        Document documentToDelete = optionalDocument.get();
+        Document documentToDelete = documentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         documentToDelete.setDeleted(true);
         return documentRepository.save(documentToDelete);
     }
@@ -78,8 +71,8 @@ public class DocumentService {
      * @param id The given ID.
      * @return The document.
      */
-    public Optional<Document> getDocumentById(Long id) {
-        return documentRepository.findById(id);
+    public Document getDocumentById(Long id) {
+        return documentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
     /**
