@@ -101,7 +101,6 @@ public class UserService {
      * Returns all deleted users
      *
      * @return The deleted users
-     * TODO test the method
      */
     public List<User> getAllDeletedUsers() {
         return userRepository.findUsersByDeletedTrue();
@@ -111,7 +110,6 @@ public class UserService {
      * Returns all the users, that are not deleted
      *
      * @return The alive users
-     * TODO test the method
      */
     public List<User> getAllAliveUsers() {
         return userRepository.findUsersByDeletedFalse();

@@ -2,7 +2,6 @@ package de.elvirakraft.docmanagement.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,7 +10,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,7 +23,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "documents")
-@JsonIdentityInfo(  // to deserialize entity in bidirectiional many-to-many relatioship
+@JsonIdentityInfo(  // to deserialize entity in bidirectional many-to-many relationship
     generator = ObjectIdGenerators.PropertyGenerator.class,
     property = "id")
 public class Document {
@@ -65,13 +63,28 @@ public class Document {
 
     // A group of users, who create/edit the document
     @ManyToMany(mappedBy = "documentsOfTheUser")
-    @JsonIgnore
     Set<User> usersWhoEditTheDocument = new HashSet<>();
+
+    // A group of categories, which the document has
+    @ManyToMany
+    @JoinTable(
+        name = "document_doccategory",
+        joinColumns = @JoinColumn(name = "document_id"),
+        inverseJoinColumns = @JoinColumn(name = "doc_category_id"))
+    Set<DocCategory> docCategories = new HashSet<>();
+
+    // A group of partners, which take part on this document
+    @ManyToMany
+    @JoinTable(
+        name = "document_partner",
+        joinColumns = @JoinColumn(name = "document_id"),
+        inverseJoinColumns = @JoinColumn(name = "partner_id"))
+    Set<Partner> currentPartners = new HashSet<>();
 
     public Document(String title, String number, LocalDate conclusionDate,
                     LocalDate terminationDate, String imageUrl, String textNote, boolean isDeleted){
-        this.number = number;
         this.title = title;
+        this.number = number;
         this.conclusionDate = conclusionDate;
         this.terminationDate = terminationDate;
         this.imageUrl = imageUrl;
@@ -87,22 +100,8 @@ public class Document {
         return this.terminationDate;
     }
 
-    // Removes the given user from the group of the users, who can edit the given document
-    public void deleteUserFromEditorsSet(User user){
-        this.usersWhoEditTheDocument.remove(user);
+    public void removeDocCategory(DocCategory category) {
+        this.docCategories.remove(category);
     }
 
-    public void addUserToEditorsSet(User user) {
-        usersWhoEditTheDocument.add(user);
-    }
-
-    /*@ManyToOne
-    @JoinColumn (name = "category_id")
-    private DocCategory category;
-
-    @ManyToOne
-    @JoinColumn (name = "partner_id")
-    private Partner partner;
-
-     */
 }

@@ -86,12 +86,13 @@ public class UserRoleService {
     /**
      * Adds the given role to the given user.
      *
-     * @param userId roleId The id of the given user and the id of the role to be given to the user.
+     * @param userId The id of the given user
+     * @param roleId The id of the role to be given to the user.
      * @return The user with the added user role.
      */
     public User addAnyRoleToUser(Long userId, Integer roleId) throws RoleNotFoundException {
         User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
-        user.addRole(userRoleRepository.findById(roleId).orElseThrow(EntityNotFoundException::new));
+        user.addRole(userRoleRepository.findById(roleId).orElseThrow(RoleNotFoundException::new));
         return userRepository.save(user);
     }
 
@@ -133,7 +134,7 @@ public class UserRoleService {
      * @return List of users
      */
     public List<User> findUsersByRole(Integer roleId) {
-        Set<User> allUsersSet = userRoleRepository.findById(roleId).get().getAllUsersWithThisRole(roleId);
+        Set<User> allUsersSet = userRoleRepository.getById(roleId).getAllUsersWithThisRole(roleId);
         allUsersSet.removeIf(User::isDeleted);
         return new ArrayList<>(allUsersSet);
     }

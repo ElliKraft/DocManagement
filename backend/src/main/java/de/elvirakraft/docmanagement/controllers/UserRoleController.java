@@ -31,19 +31,6 @@ public class UserRoleController {
         return new ResponseEntity<>(createdUserRole, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{userId}/{roleId}")
-    public ResponseEntity<User> addGivenRoleToUser(@PathVariable Integer roleId, @PathVariable Long userId) {
-        try{
-            return ResponseEntity.ok(userRoleService.addAnyRoleToUser(userId,roleId));
-        }catch (EntityNotFoundException e){
-            System.err.println(e.getLocalizedMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User was not found");
-        }catch (RoleNotFoundException e){
-            System.err.println(e.getLocalizedMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role does not exist");
-        }
-    }
-
     // updates the role itself and the role in the "rolesOfTheUser" array in User entity
     @PutMapping("/editRole")
     public ResponseEntity<UserRole> editAnyRole(@RequestBody UserRole userRole) {
@@ -63,15 +50,6 @@ public class UserRoleController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/{userId}/{roleId}")
-    public ResponseEntity<User> deleteGivenRoleFromUser(@PathVariable Long userId, @PathVariable Integer roleId) {
-        User user = userRoleService.deleteGivenRoleFromUser(roleId, userId);
-        if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-    }
-
     @GetMapping("/{userRoleId}")
     public ResponseEntity<UserRole> getUserRoleById(@PathVariable Integer userRoleId) {
         Optional<UserRole> optionalUserRole = userRoleService.getUserRoleById(userRoleId);
@@ -83,8 +61,35 @@ public class UserRoleController {
         return new ResponseEntity<>(userRoleService.getAllUserRoles(), HttpStatus.OK);
     }
 
+    // TODO not working
     @GetMapping("/users/{roleId}")
     public ResponseEntity<List<User>> getUsersByRole(@PathVariable Integer roleId) {
         return new ResponseEntity<>(userRoleService.findUsersByRole(roleId), HttpStatus.OK);
     }
+
+
+    @PostMapping("/{userId}/{roleId}")
+    public ResponseEntity<User> addGivenRoleToUser(@PathVariable Integer roleId, @PathVariable Long userId) {
+        try {
+            return ResponseEntity.ok(userRoleService.addAnyRoleToUser(userId, roleId));
+        } catch (EntityNotFoundException e){
+            System.err.println(e.getLocalizedMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User was not found");
+        } catch (RoleNotFoundException e){
+            System.err.println(e.getLocalizedMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role does not exist");
+        }
+    }
+
+    @DeleteMapping("/{userId}/{roleId}")
+    public ResponseEntity<User> deleteGivenRoleFromUser(@PathVariable Long userId, @PathVariable Integer roleId) {
+        User user = userRoleService.deleteGivenRoleFromUser(roleId, userId);
+        if (user != null) {
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+
+
 }

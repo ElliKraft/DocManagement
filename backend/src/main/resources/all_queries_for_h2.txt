@@ -1,0 +1,129 @@
+{
+    "name": "Frida",
+    "surname": "Kahlo",
+    "company": "Artist&Co",
+    "email": "kahlo@artist.br",
+    "password": "burum"
+}
+{
+    "name": "Claude",
+    "surname": "Monet",
+    "company": "MalerCompany",
+    "email": "monet@maler.fr",
+    "password": "burum"
+}
+{
+    "name": "William",
+    "surname": "Turner",
+    "company": "PaintersCompany",
+    "email": "turner@painter.gb",
+    "password": "burum"
+}
+
+
+{
+    "roleName": "DEFAULT"
+}
+{
+    "roleName": "ADMIN"
+}
+{
+    "roleName": "EMPLOYEE"
+}
+
+
+
+{
+    "name": "CONTRACT"
+}
+{
+    "name": "INVOICE"
+}
+{
+    "name": "RECEIPT"
+}
+
+
+
+{
+    "title": "New Contract",
+    "number": "1-2021",
+    "conclusionDate": "2021-01-05",
+    "terminationDate": "2021-01-05",
+    "imageUrl": "/data/image",
+    "textNote": "empty"
+}
+{
+    "title": "New Invoice",
+    "number": "03-02/2021",
+    "conclusionDate": "2021-05-23",
+    "terminationDate": "2021-05-23",
+    "imageUrl": "/data/image/1",
+    "textNote": "empty"
+}
+{
+    "title": "New Receipt",
+    "number": "01/2021",
+    "conclusionDate": "2021-06-15",
+    "terminationDate": "2021-06-15",
+    "imageUrl": "/data/image/2",
+    "textNote": "empty"
+}
+
+
+
+{
+    "name": "SaftLaden&Co",
+    "phone": "07112334455",
+    "email": "saft@laden.de",
+    "city": "Stuttgart",
+    "postalCode": "70012",
+    "street": "Saftstrasse",
+    "houseNumber": "13",
+    "contactPerson": "Ladenbesitzer"
+}
+
+{
+    "name": "WeinLaden&Co",
+    "phone": "071412337788",
+    "email": "wein@weinladen.de",
+    "city": "Ludwigsburg",
+    "postalCode": "71630",
+    "street": "Weinstrasse",
+    "houseNumber": "10"
+}
+
+
+
+INSERT INTO USERS (NAME, SURNAME, COMPANY, EMAIL, PASSWORD, DELETED)
+VALUES ('Frida', 'Kahlo', 'Artist&Co', 'kahlo@artist.br', 'burum', false),
+       ('Claude', 'Monet', 'MalerCompany', 'monet@maler.fr', 'burum', false),
+       ('William', 'Turner', 'PaintersCompany', 'turner@painter.gb', 'burum', false);
+
+INSERT INTO USER_ROLES (ROLE_NAME)
+VALUES ('DEFAULT'),
+       ('ADMIN'),
+       ('EMPLOYEE');
+
+
+INSERT INTO DOC_CATEGORIES (CATEGORY)
+VALUES ('CONTRACT'),
+       ('INVOICE'),
+       ('RECEIPT');
+
+
+INSERT INTO DOCUMENTS (TITLE, NUMBER, CONCLUSION_DATE, TERMINATION_DATE, IMAGE_URL, TEXT_NOTE, IS_DELETED)
+VALUES ('New Contract', '1-2021', PARSEDATETIME('5 Jan 2021 00:00:00', 'd MMM yyyy HH:mm:ss'), PARSEDATETIME('5 Jan 2025 00:00:00', 'd MMM yyyy HH:mm:ss'), '/data/image', 'empty', false),
+       ('New Invoice', '03-02/2021', PARSEDATETIME('23 May 2021 00:00:00', 'd MMM yyyy HH:mm:ss'),PARSEDATETIME('23 May 2021 00:00:00', 'd MMM yyyy HH:mm:ss'), '/data/image', 'empty', false),
+       ('New Receipt', '01/2021', PARSEDATETIME('15 Jun 2021 00:00:00', 'd MMM yyyy HH:mm:ss'), PARSEDATETIME('15 Jun 2021 00:00:00', 'd MMM yyyy HH:mm:ss'), '/data/image/1', 'empty', false);
+
+
+INSERT INTO PARTNERS (NAME, PHONE, EMAIL, CITY, POSTAL_CODE, STREET, HOUSE_NUMBER, IS_DELETED)
+VALUES ('SaftLaden&Co', '07112334455', 'saft@laden.de', 'Stuttgart', '70012', 'Saftstrasse', '13', false),
+       ('WeinLaden&Co', '071412337788', 'wein@weinladen.de', 'Ludwigsburg', '71630', 'Weinstrasse', '10', false);
+
+
+
+
+SELECT * FROM USERS
+SELECT * FROM USER_ROLES
