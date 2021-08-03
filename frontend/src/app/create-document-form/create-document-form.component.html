@@ -1,0 +1,35 @@
+<form nz-form [nzLayout]="'horizontal'" [formGroup]="documentForm"
+      (ngSubmit)="submitForm()">
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>Titel</nz-form-label>
+    <nz-form-control>
+      <input nz-input formControlName="title" type="text" id="title" placeholder="Titel">
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>Nummer</nz-form-label>
+    <nz-form-control>
+      <input nz-input formControlName="docNumber" type="text" id="docNumber" placeholder="Nummer des Dokuments">
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>Erstellungsdatum</nz-form-label>
+    <nz-form-control>
+      <input nz-input formControlName="conclusionDate" type="date" id="conclusionDate" placeholder="Erstellungsdatum">
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>K&uumlndigungsdatum</nz-form-label>
+    <nz-form-control>
+      <input nz-input formControlName="terminationDate" type="date" id="terminationDate" placeholder="Kündigungsdatum">
+    </nz-form-control>
+  </nz-form-item>
+  <button nz-button>
+    <i nz-icon nzType="upload"></i>
+    Bild hochladen
+  </button>
+  <div *nzModalFooter>
+    <button nz-button nzType="default" (click)="destroyModal()">Verwerfen</button>
+    <button nz-button type="submit" nzType="primary" (click)="submitForm()">Speichern</button>
+  </div>
+</form>

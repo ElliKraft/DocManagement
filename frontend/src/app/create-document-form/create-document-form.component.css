@@ -1,0 +1,11 @@
+[create-document-form] {
+  max-width: 300px;
+}
+
+.create-document-form-forgot {
+  float: bottom;
+}
+
+.create-document-form-button {
+  width: 50%;
+}
