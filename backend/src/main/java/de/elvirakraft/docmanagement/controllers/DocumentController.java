@@ -102,17 +102,17 @@ public class DocumentController {
     ///////////////////////////////////////// Getters for the arrays of a document /////////////////////////////////////////
 
     // TODO not working from here downwards
-    @GetMapping("/allCats/{docId}")
+    @GetMapping("/categories/{docId}")
     public ResponseEntity<List<DocCategory>> getAllCategoriesOfTheDocument(@PathVariable Long docId) {
         return new ResponseEntity<>(documentService.getAllCategoriesOfTheDocument(docId), HttpStatus.OK);
     }
 
-    @GetMapping("/allUsers/{docId}")
+    @GetMapping("/users/{docId}")
     public ResponseEntity<List<User>> getAllUsersOfTheDocument(@PathVariable Long docId) {
         return new ResponseEntity<>(documentService.getAllUsersToTheDocument(docId), HttpStatus.OK);
     }
 
-    @GetMapping("/allPartners/{docId}")
+    @GetMapping("/partners/{docId}")
     public ResponseEntity<List<Partner>> getAllPartnersOfTheDocument(@PathVariable Long docId) {
         return new ResponseEntity<>(documentService.getAllPartnersToTheDocument(docId), HttpStatus.OK);
     }

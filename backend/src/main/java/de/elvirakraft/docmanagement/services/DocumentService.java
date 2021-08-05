@@ -96,7 +96,8 @@ public class DocumentService {
      * @return All the categories of the document
      */
     public List<DocCategory> getAllCategoriesOfTheDocument(Long docId) {
-        Set<DocCategory> allCats = documentRepository.getById(docId).getDocCategories();
+        Document document = documentRepository.getById(docId);
+        Set<DocCategory> allCats = document.getDocCategories();
         return new ArrayList<>(allCats);
     }
 
